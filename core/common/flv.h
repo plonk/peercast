@@ -21,7 +21,7 @@
 
 #include "channel.h"
 #include "stdio.h"
-
+#include <stdlib.h>
 
 const int TAG_SCRIPTDATA = 18;
 const int TAG_AUDIO = 8;
@@ -34,7 +34,6 @@ public:
 	void read(Stream &in)
 	{
 		size = 13;
-		data = (char *)malloc(size);
 		in.read(data, size);
 
 		if (data[0] == 0x46 && //F
@@ -45,7 +44,7 @@ public:
 	}
 	int version;
 	int size = 0;
-	char *data = NULL;
+	char data[13];
 };
 
 
@@ -67,6 +66,56 @@ public:
 		type = T_UNKNOWN;
 		data = NULL;
 		packet = NULL;
+	}
+
+	~FLVTag()
+	{
+		if (data)
+			free(data);
+		if (packet)
+			free(packet);
+	}
+
+	FLVTag& operator=(const FLVTag& other)
+	{
+		size = other.size;
+		packetSize = other.packetSize;
+		type = other.type;
+
+		if (data)
+			free(data);
+		if (other.data) {
+			data = (char *) malloc(other.size);
+			memcpy(data, other.data, other.size);
+		} else
+			data  = NULL;
+
+		if (packet)
+			free(packet);
+		if (other.packet) {
+			packet = (char *) malloc(other.packetSize);
+			memcpy(packet, other.packet, other.packetSize);
+		} else
+			packet = NULL;
+	}
+
+	FLVTag(const FLVTag& other)
+	{
+		size = other.size;
+		packetSize = other.packetSize;
+		type = other.type;
+
+		if (other.data) {
+			data = (char *) malloc(other.size);
+			memcpy(data, other.data, other.size);
+		} else
+			data  = NULL;
+
+		if (other.packet) {
+			packet = (char *) malloc(other.packetSize);
+			memcpy(packet, other.packet, other.packetSize);
+		} else
+			packet = NULL;
 	}
 
 	void read(Stream &in)
@@ -181,12 +230,12 @@ public:
 
 	double readDouble(Stream &in)
 	{
-		char* data = (char *)malloc(sizeof(double));
+		double number;
+		char* data = reinterpret_cast<char*>(&number);
 		for (int i = 8; i > 0; i--) {
 			char c = in.readChar();
 			*(data + i - 1) = c;
 		}
-		double number = *reinterpret_cast<double*>(data);
 		return number;
 	};
 
@@ -210,6 +259,7 @@ public:
 					read(in);
 				}
 			}
+			free(key);
 		}
 		in.readChar();
 	}
@@ -223,6 +273,7 @@ public:
 				bitrate = 0;
 				read(in);
 			}
+			free(name);
 		}
 		return bitrate > 0;
 	}
@@ -237,7 +288,7 @@ public:
 			readBool(in);
 		}
 		else if (type == AMF_STRING) {
-			readString(in);
+			free(readString(in));
 		}
 		else if (type == AMF_OBJECT) {
 			readObject(in);

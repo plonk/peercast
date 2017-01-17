@@ -58,7 +58,7 @@ int FLVStream::readPacket(Stream &in, Channel *ch)
 		case TAG_SCRIPTDATA:
 		{
 			AMFObject amf;
-			MemoryStream flvmem = MemoryStream(flvTag.data, flvTag.size);
+			MemoryStream flvmem(flvTag.data, flvTag.size);
 			if (amf.readMetaData(flvmem)) {
 				flvmem.close();
 				bitrate = amf.bitrate;
@@ -90,7 +90,7 @@ int FLVStream::readPacket(Stream &in, Channel *ch)
 		if (metaData.type==TAG_SCRIPTDATA) len += metaData.packetSize;
 		if (avcHeader.type == TAG_VIDEO) len += avcHeader.packetSize;
 		if (aacHeader.type == TAG_AUDIO) len += aacHeader.packetSize;
-		MemoryStream mem = MemoryStream(ch->headPack.data, len);
+		MemoryStream mem(ch->headPack.data, len);
 		mem.write(fileHeader.data, fileHeader.size);
 		if (metaData.type == TAG_SCRIPTDATA) mem.write(metaData.packet, metaData.packetSize);
 		if (avcHeader.type == TAG_VIDEO) mem.write(avcHeader.packet, avcHeader.packetSize);
@@ -108,7 +108,7 @@ int FLVStream::readPacket(Stream &in, Channel *ch)
 	else {
 		ChanPacket pack;
 
-		MemoryStream mem = MemoryStream(flvTag.packet, flvTag.packetSize);
+		MemoryStream mem(flvTag.packet, flvTag.packetSize);
 
 		int rlen = flvTag.packetSize;
 		while (rlen)
