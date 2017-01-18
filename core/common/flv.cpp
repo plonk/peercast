@@ -44,7 +44,7 @@ int FLVStream::readPacket(Stream &in, Channel *ch)
 
 	if (ch->streamPos == 0) {
 		bitrate = 0;
-		FLVFileHeader header = FLVFileHeader();
+		FLVFileHeader header;
 		header.read(in);
 		fileHeader = header;
 		headerUpdate = true;

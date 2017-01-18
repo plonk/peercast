@@ -160,10 +160,6 @@ public:
 	FLVTag avcHeader;
 	FLVStream()
 	{
-		fileHeader = FLVFileHeader();
-		metaData = FLVTag();
-		aacHeader = FLVTag();
-		avcHeader = FLVTag();
 	}
 	virtual void readHeader(Stream &, Channel *);
 	virtual int	 readPacket(Stream &, Channel *);
