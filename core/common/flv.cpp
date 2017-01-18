@@ -55,7 +55,7 @@ int FLVStream::readPacket(Stream &in, Channel *ch)
 	
 	switch (flvTag.type)
 	{
-		case TAG_SCRIPTDATA:
+		case FLVTag::T_SCRIPT:
 		{
 			AMFObject amf;
 			MemoryStream flvmem(flvTag.data, flvTag.size);
@@ -66,7 +66,7 @@ int FLVStream::readPacket(Stream &in, Channel *ch)
 				headerUpdate = true;
 			}
 		}
-		case TAG_VIDEO:
+		case FLVTag::T_VIDEO:
 		{
 			//AVC Header
 			if (flvTag.data[0] == 0x17 && flvTag.data[1] == 0x00 &&
@@ -75,7 +75,7 @@ int FLVStream::readPacket(Stream &in, Channel *ch)
 				headerUpdate = true;
 			}
 		}
-		case TAG_AUDIO:
+		case FLVTag::T_AUDIO:
 		{
 			//AAC Header
 			if (flvTag.data[0] == 0xaf && flvTag.data[1] == 0x00) {
@@ -87,14 +87,14 @@ int FLVStream::readPacket(Stream &in, Channel *ch)
 	
 	if (headerUpdate && fileHeader.size>0) {
 		int len = fileHeader.size;
-		if (metaData.type==TAG_SCRIPTDATA) len += metaData.packetSize;
-		if (avcHeader.type == TAG_VIDEO) len += avcHeader.packetSize;
-		if (aacHeader.type == TAG_AUDIO) len += aacHeader.packetSize;
+		if (metaData.type == FLVTag::T_SCRIPT) len += metaData.packetSize;
+		if (avcHeader.type == FLVTag::T_VIDEO) len += avcHeader.packetSize;
+		if (aacHeader.type == FLVTag::T_AUDIO) len += aacHeader.packetSize;
 		MemoryStream mem(ch->headPack.data, len);
 		mem.write(fileHeader.data, fileHeader.size);
-		if (metaData.type == TAG_SCRIPTDATA) mem.write(metaData.packet, metaData.packetSize);
-		if (avcHeader.type == TAG_VIDEO) mem.write(avcHeader.packet, avcHeader.packetSize);
-		if (aacHeader.type == TAG_AUDIO) mem.write(aacHeader.packet, aacHeader.packetSize);
+		if (metaData.type == FLVTag::T_SCRIPT) mem.write(metaData.packet, metaData.packetSize);
+		if (avcHeader.type == FLVTag::T_VIDEO) mem.write(avcHeader.packet, avcHeader.packetSize);
+		if (aacHeader.type == FLVTag::T_AUDIO) mem.write(aacHeader.packet, aacHeader.packetSize);
 
 		ch->info.bitrate = bitrate;
 

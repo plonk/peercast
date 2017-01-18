@@ -23,10 +23,6 @@
 #include "stdio.h"
 #include <stdlib.h>
 
-const int TAG_SCRIPTDATA = 18;
-const int TAG_AUDIO = 8;
-const int TAG_VIDEO = 9;
-
 // -----------------------------------
 class FLVFileHeader
 {
@@ -55,9 +51,9 @@ public:
 	enum TYPE
 	{
 		T_UNKNOWN,
-		T_SCRIPT,
-		T_AUDIO,
-		T_VIDEO
+		T_SCRIPT	= 18,
+		T_AUDIO		= 8,
+		T_VIDEO		= 9
 	};
 
 	FLVTag()
@@ -126,7 +122,7 @@ public:
 		unsigned char binary[11];
 		in.read(binary, 11);
 
-		type = binary[0];
+		type = static_cast<TYPE>(binary[0]);
 		size = (binary[1] << 16) | (binary[2] << 8) | (binary[3]);
 		//int timestamp = (binary[7] << 24) | (binary[4] << 16) | (binary[5] << 8) | (binary[6]);
 		//int streamID = (binary[8] << 16) | (binary[9] << 8) | (binary[10]);
@@ -147,11 +143,11 @@ public:
 	{
 		switch (type)
 		{
-		case TAG_SCRIPTDATA:
+		case T_SCRIPT:
 			return "Script";
-		case TAG_VIDEO:
+		case T_VIDEO:
 			return "Video";
-		case TAG_AUDIO:
+		case T_AUDIO:
 			return "Audio";
 		}
 		return "Unknown";
@@ -159,7 +155,7 @@ public:
 
 	int size = 0;
 	int packetSize = 0;
-	char type = T_UNKNOWN;
+	TYPE type = T_UNKNOWN;
 	unsigned char *data = NULL;
 	unsigned char *packet = NULL;
 };
