@@ -114,8 +114,8 @@ int FLVStream::readPacket(Stream &in, Channel *ch)
 		while (rlen)
 		{
 			int rl = rlen;
-			if (rl > ChanMgr::MAX_METAINT)
-				rl = ChanMgr::MAX_METAINT;
+			if (rl > ChanPacket::MAX_DATALEN)
+				rl = ChanPacket::MAX_DATALEN;
 
 			pack.init(ChanPacket::T_DATA, pack.data, rl, ch->streamPos);
 			mem.read(pack.data, pack.len);
