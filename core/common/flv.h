@@ -44,7 +44,7 @@ public:
 	}
 	int version;
 	int size = 0;
-	char data[13];
+	unsigned char data[13];
 };
 
 
@@ -85,7 +85,7 @@ public:
 		if (data)
 			free(data);
 		if (other.data) {
-			data = (char *) malloc(other.size);
+			data = (unsigned char *) malloc(other.size);
 			memcpy(data, other.data, other.size);
 		} else
 			data  = NULL;
@@ -93,7 +93,7 @@ public:
 		if (packet)
 			free(packet);
 		if (other.packet) {
-			packet = (char *) malloc(other.packetSize);
+			packet = (unsigned char *) malloc(other.packetSize);
 			memcpy(packet, other.packet, other.packetSize);
 		} else
 			packet = NULL;
@@ -106,13 +106,13 @@ public:
 		type = other.type;
 
 		if (other.data) {
-			data = (char *) malloc(other.size);
+			data = (unsigned char *) malloc(other.size);
 			memcpy(data, other.data, other.size);
 		} else
 			data  = NULL;
 
 		if (other.packet) {
-			packet = (char *) malloc(other.packetSize);
+			packet = (unsigned char *) malloc(other.packetSize);
 			memcpy(packet, other.packet, other.packetSize);
 		} else
 			packet = NULL;
@@ -130,13 +130,13 @@ public:
 		size = (binary[1] << 16) | (binary[2] << 8) | (binary[3]);
 		//int timestamp = (binary[7] << 24) | (binary[4] << 16) | (binary[5] << 8) | (binary[6]);
 		//int streamID = (binary[8] << 16) | (binary[9] << 8) | (binary[10]);
-		data = (char *)malloc(size);
+		data = (unsigned char *)malloc(size);
 		in.read(data, size);
 
 		unsigned char prevsize[4];
 		in.read(prevsize, 4);
 
-		packet = (char *)malloc(11+size+4);
+		packet = (unsigned char *)malloc(11+size+4);
 		memcpy(packet, binary, 11);
 		memcpy(packet+11, data, size);
 		memcpy(packet+11+size, prevsize, 4);
@@ -160,8 +160,8 @@ public:
 	int size = 0;
 	int packetSize = 0;
 	char type = T_UNKNOWN;
-	char *data = NULL;
-	char *packet = NULL;
+	unsigned char *data = NULL;
+	unsigned char *packet = NULL;
 };
 
 
