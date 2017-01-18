@@ -93,6 +93,7 @@ public:
 			memcpy(packet, other.packet, other.packetSize);
 		} else
 			packet = NULL;
+		return *this;
 	}
 
 	FLVTag(const FLVTag& other)
