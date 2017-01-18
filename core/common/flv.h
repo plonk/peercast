@@ -66,8 +66,6 @@ public:
 
 	~FLVTag()
 	{
-		if (data)
-			free(data);
 		if (packet)
 			free(packet);
 	}
@@ -78,14 +76,6 @@ public:
 		packetSize = other.packetSize;
 		type = other.type;
 
-		if (data)
-			free(data);
-		if (other.data) {
-			data = (unsigned char *) malloc(other.size);
-			memcpy(data, other.data, other.size);
-		} else
-			data  = NULL;
-
 		if (packet)
 			free(packet);
 		if (other.packet) {
@@ -93,6 +83,10 @@ public:
 			memcpy(packet, other.packet, other.packetSize);
 		} else
 			packet = NULL;
+
+		if (packet)
+			data = packet + 11;
+
 		return *this;
 	}
 
@@ -102,22 +96,18 @@ public:
 		packetSize = other.packetSize;
 		type = other.type;
 
-		if (other.data) {
-			data = (unsigned char *) malloc(other.size);
-			memcpy(data, other.data, other.size);
-		} else
-			data  = NULL;
-
 		if (other.packet) {
 			packet = (unsigned char *) malloc(other.packetSize);
 			memcpy(packet, other.packet, other.packetSize);
 		} else
 			packet = NULL;
+
+		if (packet)
+			data = packet + 11;
 	}
 
 	void read(Stream &in)
 	{
-		if (data != NULL) free(data);
 		if (packet != NULL) free(packet);
 
 		unsigned char binary[11];
@@ -127,16 +117,12 @@ public:
 		size = (binary[1] << 16) | (binary[2] << 8) | (binary[3]);
 		//int timestamp = (binary[7] << 24) | (binary[4] << 16) | (binary[5] << 8) | (binary[6]);
 		//int streamID = (binary[8] << 16) | (binary[9] << 8) | (binary[10]);
-		data = (unsigned char *)malloc(size);
-		in.read(data, size);
 
-		unsigned char prevsize[4];
-		in.read(prevsize, 4);
-
-		packet = (unsigned char *)malloc(11+size+4);
+		packet = (unsigned char *) malloc(11 + size + 4);
 		memcpy(packet, binary, 11);
-		memcpy(packet+11, data, size);
-		memcpy(packet+11+size, prevsize, 4);
+		in.read(packet + 11, size + 4);
+
+		data = packet + 11;
 		packetSize = 11 + size + 4;
 	}
 
