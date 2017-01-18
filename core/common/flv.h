@@ -21,7 +21,6 @@
 
 #include "channel.h"
 #include "stdio.h"
-#include <stdlib.h>
 
 // -----------------------------------
 class FLVFileHeader
@@ -67,7 +66,7 @@ public:
 	~FLVTag()
 	{
 		if (packet)
-			free(packet);
+			delete [] packet;
 	}
 
 	FLVTag& operator=(const FLVTag& other)
@@ -77,9 +76,9 @@ public:
 		type = other.type;
 
 		if (packet)
-			free(packet);
+			delete [] packet;
 		if (other.packet) {
-			packet = (unsigned char *) malloc(other.packetSize);
+			packet = new unsigned char[other.packetSize];
 			memcpy(packet, other.packet, other.packetSize);
 		} else
 			packet = NULL;
@@ -97,7 +96,7 @@ public:
 		type = other.type;
 
 		if (other.packet) {
-			packet = (unsigned char *) malloc(other.packetSize);
+			packet = new unsigned char[other.packetSize];
 			memcpy(packet, other.packet, other.packetSize);
 		} else
 			packet = NULL;
@@ -108,7 +107,8 @@ public:
 
 	void read(Stream &in)
 	{
-		if (packet != NULL) free(packet);
+		if (packet != NULL)
+			delete [] packet;
 
 		unsigned char binary[11];
 		in.read(binary, 11);
@@ -118,7 +118,7 @@ public:
 		//int timestamp = (binary[7] << 24) | (binary[4] << 16) | (binary[5] << 8) | (binary[6]);
 		//int streamID = (binary[8] << 16) | (binary[9] << 8) | (binary[10]);
 
-		packet = (unsigned char *) malloc(11 + size + 4);
+		packet = new unsigned char[11 + size + 4];
 		memcpy(packet, binary, 11);
 		in.read(packet + 11, size + 4);
 
@@ -200,7 +200,7 @@ public:
 			return NULL;
 		}
 		else {
-			char* data = (char *)malloc(len+1);
+			char* data = new char[len+1];
 			*(data+len) = '\0';
 			in.read(data, len);
 			return data;
@@ -238,7 +238,7 @@ public:
 					read(in);
 				}
 			}
-			free(key);
+			delete [] key;
 		}
 		in.readChar();
 	}
@@ -252,7 +252,7 @@ public:
 				bitrate = 0;
 				read(in);
 			}
-			free(name);
+			delete [] name;
 		}
 		return bitrate > 0;
 	}
@@ -267,7 +267,7 @@ public:
 			readBool(in);
 		}
 		else if (type == AMF_STRING) {
-			free(readString(in));
+			delete [] readString(in);
 		}
 		else if (type == AMF_OBJECT) {
 			readObject(in);
