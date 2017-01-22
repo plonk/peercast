@@ -52,7 +52,7 @@
 #endif
 
 // -----------------------------------
-char *Channel::srcTypes[]=
+const char *Channel::srcTypes[]=
 {
 	"NONE",
 	"PEERCAST",
@@ -61,7 +61,7 @@ char *Channel::srcTypes[]=
 	"URL"
 };
 // -----------------------------------
-char *Channel::statusMsgs[]=
+const char *Channel::statusMsgs[]=
 {
 	"NONE",
 	"WAIT",
@@ -823,7 +823,7 @@ yp0:
 			char ipstr[64];
 			ch->sourceHost.host.toStr(ipstr);
 
-			char *type = "";
+			const char *type = "";
 			if (ch->sourceHost.tracker)
 				type = "(tracker)";
 			else if (ch->sourceHost.yp)

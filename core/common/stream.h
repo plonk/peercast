@@ -179,7 +179,7 @@ public:
 		writeLong(SWAP4(v));
 	}
 
-	void	writeTag(char id[4])
+	void	writeTag(const char id[4])
 	{
 		write(id,4);
 	}

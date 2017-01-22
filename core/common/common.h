@@ -288,9 +288,9 @@ inline int strToID(char *str)
 }
 
 // -----------------------------------
-char *getCGIarg(const char *str, const char *arg);
-bool cmpCGIarg(char *str, char *arg, char *value);
-bool hasCGIarg(char *str, char *arg);
+const char *getCGIarg(const char *str, const char *arg);
+bool cmpCGIarg(const char *str, const char *arg, const char *value);
+bool hasCGIarg(const char *str, const char *arg);
 
 // ----------------------------------
 extern void LOG(const char *fmt,...);
