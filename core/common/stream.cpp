@@ -241,7 +241,9 @@ int	Stream::readLine(char *in, int max)
 	while(max--)
     {                
     	char c;         
-    	read(&c,1);
+    	if (read(&c,1) < 1) {
+            throw StreamException("EOF");
+        }
 		if (c == '\n')
 			break;
 		if (c == '\r')
