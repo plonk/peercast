@@ -283,7 +283,7 @@ public:
 	{
 		if (own && buf)
 		{
-			delete buf;
+			delete [] buf;
 			buf = NULL;
 			own = false;
 		}
@@ -478,7 +478,7 @@ public:
 	{
 		if (own && buf)
 		{
-			delete buf;
+			delete[] buf;
 			buf = NULL;
 			own = false;
 		}
